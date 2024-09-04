@@ -1,7 +1,8 @@
 import User  from "../models/user.model.js";
-import bcryptjs from 'bcryptjs';
+import jwt from 'jsonwebtoken' ; 
 import { generateToken, setCookies , storeRefreshToken } from "../lib/utils/generateToken.js";
 import { redis } from "../lib/utils/redis.js";
+import bcryptjs from 'bcryptjs' ; 
 export const signUp =  async (req,res) => {
     try {
     const { name , password , email , gender  } = req.body  ; 
@@ -84,7 +85,7 @@ export const signIn = async (req,res) => {
 }catch(err) {
     console.log(err.message) ;  
     return res.json({ message : err.message}) ; 
-    
+
 } 
 }
 
@@ -117,6 +118,40 @@ export const LoggedOut = async (req,res) => {
     }catch(err) {
         console.log(err.message) ; 
     }
+}
+
+export const refreshToken = async (req,res) => {
+    try {
+        const refreshToken = req.cookies.refreshToken ;
+        if(!refreshToken) {
+            return res.json({message : 'No refresh token provided'}) ;
+        }
+
+        const decoded = await jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET) ; 
+        const user = await User.findById(decoded.id) ;
+        if(!user) {
+            return res.json({message : 'User Not Found'}) ; 
+        }
+
+        const refreshFromRedis = await redis.get(`refresh_token:${decoded.id}`) ;
+        console.log(refreshFromRedis) ;
+        if(refreshFromRedis!== refreshToken) {
+            return res.json({message : 'Invalid refresh token'}) ; 
+        }
+        const accessToken = jwt.sign({id : user._id},process.env.ACCESS_TOKEN_SECRET) ;
+        
+        res.cookie('accessToken',accessToken,{
+            httpOnly : true,
+            secure : process.env.NODE_ENV === 'production',
+            sameSite : 'lax',
+            expires : new Date(Date.now() + 1000 * 60 * 15) // 15 min
+        });
+    return res.json({message : 'Access token refreshed'}); 
+        
+    }catch(err) {
+        console.log(err.message) ; 
+    }
+ 
 }
 
 

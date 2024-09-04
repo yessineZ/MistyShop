@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken' ;
 
 
 export const CheckAuth = async (req,res,next) => {
-    const token = req.cookies.jwt;
+    const token = req.cookies.accessToken;
 
     if(!token) {
         return res.status(401).json({message: 'Not authenticated'}) ;
