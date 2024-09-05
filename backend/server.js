@@ -2,6 +2,7 @@ import express from 'express' ;
 import env from 'dotenv'
 import authRoute from './routes/auth.routes.js';
 import  {ConnectToMongo}  from './database/ConnectToDb.js';
+import productsRoute from './routes/products.routes.js' ; 
 import cookieParser from 'cookie-parser';
 const app =  express() ;
 app.use(cookieParser()) ; 
@@ -26,6 +27,7 @@ app.listen(process.env.PORT, () => {
 
 
 app.use('/api/auth',authRoute) ;   
+app.use('/api/products',productsRoute) ;   
 
 
 
