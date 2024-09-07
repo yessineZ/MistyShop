@@ -155,8 +155,7 @@ export const toogleFeaturedProduct = async (req,res) => {
         if(!product) {
             return res.status(404).json({message : 'Product not found'}) ;
         }
-
-
+        return res.json({message : 'Featured product toggled successfully'}) ;
     }catch(err) {
         console.log(err.message) ; 
         res.status(500).json({message : 'Failed to toggle featured product'}) ;

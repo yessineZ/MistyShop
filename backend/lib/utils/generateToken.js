@@ -30,7 +30,7 @@ export const setCookies =  (res,refreshToken,accessToken) => {
         sameSite: 'strict',
         maxAge : 60 * 15 * 1000 
     });
-    console.log("hello") ; 
+
     
     res.cookie('refreshToken',refreshToken , {
         httpOnly: true,

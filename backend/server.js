@@ -1,6 +1,10 @@
 import express from 'express' ; 
-import env from 'dotenv'
+import env from 'dotenv';
+import orderRoute from './routes/payment.routes.js' ; 
+import couponsRoute from './routes/coupon.route.js'; 
+import cartRoute from './routes/cart.routes.js';
 import authRoute from './routes/auth.routes.js';
+import analyticsRoute from './routes/analytics.routes.js' ; 
 import  {ConnectToMongo}  from './database/ConnectToDb.js';
 import productsRoute from './routes/products.routes.js' ; 
 import cookieParser from 'cookie-parser';
@@ -28,6 +32,8 @@ app.listen(process.env.PORT, () => {
 
 app.use('/api/auth',authRoute) ;   
 app.use('/api/products',productsRoute) ;   
-
-
+app.use('/api/cart',cartRoute) ; 
+app.use('/api/coupons',couponsRoute) ; 
+app.use('/api/order',orderRoute) ; 
+app.use('/api/analytics',analyticsRoute) ; 
 

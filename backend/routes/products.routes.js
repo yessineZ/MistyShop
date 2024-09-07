@@ -9,7 +9,8 @@ router.post('/',CheckAuth,checkAdmin,createProduct) ;
 router.delete('/delete/:id',CheckAuth,checkAdmin,deleteProduct) ; 
 router.get('/recommendations',getRecommendedProduct) ; 
 router.get('/category/:category',getProductsByCategory) ;
-router.patch('/toogle/:id',CheckAuth,checkAdmin,toogleFeaturedProduct) ;  
+router.patch('/toogle/:id',CheckAuth,checkAdmin,toogleFeaturedProduct) ; 
+ 
 
 
 export default router ; 
