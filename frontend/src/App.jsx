@@ -1,66 +1,31 @@
 import { useState, useEffect } from 'react'
 import Circle from './Circle';
-import './App.css'
+import { Routes ,Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
+import Navbar from './components/Navbar';
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [trafficLight, setTrafficLight] = useState([
-    {
-      color: 'bg-red-600',
-      text: 'Win met3eddi ????',
-      time: 3000,
-      isCurrent: true,
-    },
-    {
-      color: 'bg-yellow-500',
-      text: 'Ken tnajem t3ada barra 3ala rou7ek',
-      time: 2000,
-      isCurrent: false,
-    },
-    {
-      color: 'bg-green-700',
-      text: 'barra endah',
-      time: 3000,
-      isCurrent: false,
-    }
-  ]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTrafficLight(prevTrafficLight => {
-        const newTrafficLight = prevTrafficLight.map((light, index) => ({
-          ...light,
-          isCurrent: index ===currentIndex,
-        }));
-
-        setCurrentIndex((currentIndex + 1) % trafficLight.length);
-
-        return newTrafficLight;
-      });
-    }, trafficLight[currentIndex].time);
-
-    return () => clearInterval(interval); 
-  }, [currentIndex, trafficLight]);
-
   return (
-    <>
-      <div className="flex items-center justify-center">
-        <div className="flex flex-col justify-around items-center gap-2 bg-black p-4">
-          {trafficLight.map((ele, index) => {
-            return (
-              <div key={index} className="w-60 h-60 rounded-full flex items-center justify-center bg-slate-100">
-                <Circle color={ele.color}  isCurrent={ele.isCurrent} />
-              </div>
-            );
-          })}
-          <p className="text-white mt-4">
-            {trafficLight.find(light => light.isCurrent)?.text}
-          </p>
-        </div>
+
+    <div className='min-h-screen bg-[#1a1919] relative overflow-hidden'>
+      <div className='absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.3)_0%,rgba(10,80,60,0.2)_45%,rgba(0,0,0,0.1)_100%)]'>
+      
       </div>
-    </>
-  );
+      
+      <div className='relative z-50 pt-20'>
+          <Navbar/>
+          <Routes>
+            <Route path='/' element={<HomePage/>} />
+            <Route path='/signup' element={<SignUpPage/>} /> 
+            <Route path='/login' element={<LoginPage/>} />
+          
+          </Routes>
+      </div>
+      
+    </div>
+  )
 }
 
 export default App;
