@@ -20,13 +20,13 @@ export const signUp =  async (req,res) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
      
     if(!email.match(emailRegex)) {
-        res.json({error : 'please enter a valid email address'}) ; 
+        res.json({message : 'please enter a valid email address'}) ; 
         return ; 
     }
 
     if(password.length < 6 ) {
         console.log('Please enter a valid password > 6') ; 
-       return  res.json({error : 'password must be at least 6 characters long'}) ; 
+       return  res.json({message : 'password must be at least 6 characters long'}) ; 
         
     }
 
@@ -44,7 +44,7 @@ export const signUp =  async (req,res) => {
 
         setCookies(res,refreshToken,accessToken) ;     
         await user.save() ; 
-        res.send({message : 'User created successfully' ,  user : user}) ; 
+        res.status(201).send({message : 'User created successfully' ,  user : user}) ; 
     }
     else {
         res.status(500).send('There is error while creating the user') ;
