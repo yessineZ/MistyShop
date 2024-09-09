@@ -16,12 +16,13 @@ export const generateToken = (id) => {
 
 }
 
-
-export const storeRefreshToken = async (userId,refreshToken) => {
-    await redis.set(`refresh_token:${userId}`,refreshToken,"EX",60*60*24*7) ; 
-
-}
-
+export const storeRefreshToken = async (userId, refreshToken) => {
+    try {
+        await redis.set(`refresh_token:${userId}`, refreshToken, 'EX', 60 * 60 * 24 * 7);
+    } catch (error) {
+        console.error('Error storing refresh token in Redis:', error.message);
+    }
+};
 
 export const setCookies =  (res,refreshToken,accessToken) => {
     res.cookie('accessToken', accessToken, {

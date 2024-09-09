@@ -1,5 +1,6 @@
 import { redis } from "../lib/utils/redis.js";
 import Product from "../models/product.model.js";
+import cloudinary from "../lib/utils/cloudinary.js";
 
 export const getAllProducts  = async (req,res) => {
     try {
@@ -94,12 +95,13 @@ export const deleteProduct = async (req,res) => {
                 res.status(500).json({message : 'Failed to delete product image'}) ;
             }
 
-        await product.remove() ;
+        await Product.deleteOne({_id : product._id}) ;
+        return res.status(200).json({message : 'Product deleted'}) ;
 
         
     }catch(err) {
         console.log(err) ; 
-        res.status.json({message : 'Product not found'}) ;
+        res.status(500).json({message : 'Product not found'}) ;
     }
 }
 
@@ -146,16 +148,21 @@ export const getProductsByCategory = async (req, res) => {
 
 
 export const toogleFeaturedProduct = async (req,res) => {
+    console.log("in toogle featured product") ; 
     try {
         const { id } = req.params ; 
-        const product = await Product.findByIdAndUpdate(id,{
-            isFeatured:!product.isFeatured
-        }) ; 
-      await updateFeaturedProductFromRedis() ; 
+        const product = await Product.findById(id) ; 
         if(!product) {
             return res.status(404).json({message : 'Product not found'}) ;
         }
-        return res.json({message : 'Featured product toggled successfully'}) ;
+        
+        product.isFeatured =!product.isFeatured ;
+        Promise.all([await product.save(),await updateFeaturedProductFromRedis() ]) ;
+
+        if(!product) {
+            return res.status(404).json({message : 'Product not found'}) ;
+        }
+        return res.json({message : 'Featured product toggled successfully',product}) ;
     }catch(err) {
         console.log(err.message) ; 
         res.status(500).json({message : 'Failed to toggle featured product'}) ;

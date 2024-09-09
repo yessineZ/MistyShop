@@ -2,61 +2,45 @@ import User  from "../models/user.model.js";
 import jwt from 'jsonwebtoken' ; 
 import { generateToken, setCookies , storeRefreshToken } from "../lib/utils/generateToken.js";
 import { redis } from "../lib/utils/redis.js";
-import bcryptjs from 'bcryptjs' ; 
-export const signUp =  async (req,res) => {
+import bcrypt from 'bcryptjs' ; 
+
+export const signUp = async (req, res) => {
     try {
-    const { name , password , email , gender  } = req.body  ; 
+        const { name, password, email, gender } = req.body;
 
-    if(!name || !password || !email || !gender) {
-        return res.send({message : 'Please fill all the fields'}) ;
+        if (!name || !password || !email || !gender) {
+            return res.status(400).json({ message: 'Please fill all the fields' });
+        }
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email.match(emailRegex)) {
+            return res.status(400).json({ message: 'Please enter a valid email address' });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = new User({ name, password: hashedPassword, email, gender });
+        await user.save();
+
+        const { accessToken, refreshToken } = generateToken(user._id);
+        await storeRefreshToken(user._id, refreshToken);
+        setCookies(res, refreshToken, accessToken);
+
+        res.status(201).json({ message: 'User created successfully', user });
+    } catch (err) {
+        console.error(err.message); 
+        res.status(500).json({ message: 'Internal server error' });
     }
-    //misty going to check if there is exsit user already
-    const existingUser = await User.findOne({ name }) ;
-    if(existingUser) {
-        return res.send({ message : 'User already exists'})  ; 
-    }
-    //misty going to check email format
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-     
-    if(!email.match(emailRegex)) {
-        res.json({message : 'please enter a valid email address'}) ; 
-        return ; 
-    }
-
-    if(password.length < 6 ) {
-        console.log('Please enter a valid password > 6') ; 
-       return  res.json({message : 'password must be at least 6 characters long'}) ; 
-        
-    }
-
-    //misty going the hash the password 
-
-    const HashedPassword = await bcryptjs.hashSync(password,10) ; 
-
-    
-    const user = new User({ name  , password : HashedPassword , email , gender }) ;
-    if(user) {
-        const  { accessToken, refreshToken } =  generateToken(user._id) ; 
-        console.log(accessToken, refreshToken) ;
-
-        await storeRefreshToken(user._id, refreshToken) ;
-
-        setCookies(res,refreshToken,accessToken) ;     
-        await user.save() ; 
-        res.status(201).send({message : 'User created successfully' ,  user : user}) ; 
-    }
-    else {
-        res.status(500).send('There is error while creating the user') ;
-
-    }
-    
-    }catch(err) {
-        console.log(err.message) ; 
-    }
-
-    
-}
+};
 
 
 export const signIn = async (req,res) => {
@@ -70,7 +54,7 @@ export const signIn = async (req,res) => {
     if(!user) {
         return res.json({message : 'User Not Found'}) ; 
     }
-    const isMatch = await bcryptjs.compare(password,user.password) ;
+    const isMatch = await bcrypt.compare(password,user.password) ;
     if(!isMatch) {
         return res.json({message : 'Incorrect Email or Password'}) ; 
     }
@@ -110,8 +94,8 @@ export const LoggedOut = async (req,res) => {
         if(!refreshToken) {
             return res.json({message : 'No refresh token provided'}) ;
         }
-        const id = jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET) ; 
-        await redis.del(`refresh_token:${id}`) ; 
+        const decoded = jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET) ; 
+        await redis.del(`refresh_token:${decoded}`) ; 
         res.clearCookie('accessToken') ; 
         res.clearCookie('refreshToken') ;
         res.json({message : 'Logged Out Successfully'}) ;

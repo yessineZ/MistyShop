@@ -6,6 +6,8 @@ import LoginPage from './pages/Login';
 import Navbar from './components/Navbar';
 import SignUpPage from './pages/signUp';
 import LoadingSpinner from './components/LoadingSpinner';
+import AdminPage from './pages/AdminPage';
+import CategoryPage from './pages/CategoryPage';
 
 function App() {
   const { user, getMe, loading } = useAuthStore((state) => ({
@@ -38,6 +40,8 @@ function App() {
           <Route path='/' element={<HomePage />} />
           <Route path='/signup' element={!user ? <SignUpPage /> : <Navigate to='/'/>} />
           <Route path='/login' element={!user ? <LoginPage /> : <Navigate to='/'/> } />
+          <Route path='/secret-dashboard' element={user?.role === 'admin' ? <AdminPage/> : <Navigate to='/login' /> } />
+          <Route path='/category/:category' element={<CategoryPage/>}></Route>
         </Routes>
       </div>
     </div>
