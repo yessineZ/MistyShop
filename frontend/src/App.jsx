@@ -8,6 +8,7 @@ import SignUpPage from './pages/signUp';
 import LoadingSpinner from './components/LoadingSpinner';
 import AdminPage from './pages/AdminPage';
 import CategoryPage from './pages/CategoryPage';
+import { useCartStore } from './store/useCartStore';
 
 function App() {
   const { user, getMe, loading } = useAuthStore((state) => ({
@@ -16,11 +17,19 @@ function App() {
     loading: state.loading,
   }));
 
+
+  const { getCartItems } = useCartStore() ; 
+
   useEffect(() => {
     if (!user) {
       getMe();
     }
   }, [getMe, user]);
+
+
+  useEffect(() => {
+    getCartItems();
+  },[])
 
   if (loading) {
     return (

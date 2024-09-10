@@ -7,8 +7,12 @@ export const getCartProducts = async (req,res) => {
         const user = await User.findById(userId)  ;
         if(!user) return res.status(404).json({message : 'User not found'}) ;
         const products = await Product.find({_id : { $in : user.cartItems }}) ;
+        if(!products) {
+            return res.status(404).json({message : 'No products found in the cart'}) ;
+        }
         const cartItems = products.map((product) => {
-            const item = user.cartItems.find(cartItem => cartItem._id === product.id ) ;
+            const item = user.cartItems.find(cartItem => cartItem.id === product.id ) ;
+            console.log(item) ;
             return {
                 product ,
                 quantity : item.quantity, 
@@ -21,14 +25,16 @@ export const getCartProducts = async (req,res) => {
     }
 }
 
-export const addToCart = async () => {
+export const addToCart = async (req,res) => {
     try {
         const { productId}  = req.body ;
         const userId = req.userId ;
 
         const user = await User.findById(userId)  ; 
 
-        const existingItem = user.cartItems.find((item) => item.id === productId ) ; 
+        const existingItem = user.cartItems.find((item) => item.id === productId ) ;
+        
+        console.log(existingItem) ;  
         
         if(existingItem) {
 
