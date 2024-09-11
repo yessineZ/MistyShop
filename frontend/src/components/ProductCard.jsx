@@ -11,8 +11,7 @@ const ProductCard = ({ product }) => {
             toast.error("Please log in to add items to your cart");
             return;
         }else {
-			addToCart(product) ;  // update the cart store with the new item
-            //add to cart
+			addToCart(product) ;  
         }
 
 	}; 

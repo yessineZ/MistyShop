@@ -8,11 +8,13 @@ export const useCartStore = create((set,get) => ({
     coupon : null , 
     total : 0 , 
     subtotal : 0 , 
+    isCouponApplied : false ,
+    
 
     getCartItems : async () => {
         try {
             const res = await axios.get('/api/cart/getCart') ; 
-            get().calculateTotals() ; 
+            get().calculateTotals() ;
             set({cart : res.data.cartItems}) ;
         }catch(err) {
             set({ cart : []}) ; 
@@ -38,6 +40,7 @@ export const useCartStore = create((set,get) => ({
             } else {
                 newCart = [...prevState.cart, { ...product, quantity: 1 }];
             }
+            get().calculateTotals() ;
 
             return { cart: newCart };
         });
@@ -89,11 +92,13 @@ updateQuantity : async (productId, quantity) => {
 },
     calculateTotals : () => {
         const { coupon , cart} = get() ; 
-        const subtotal = cart.reduce((sum,item) => sum + item.product.price * item.product.quantity ,0 ) ; 
+        console.log(cart) ; 
+        const subtotal = cart.reduce((sum,item) => sum + item.product.price * item.quantity ,0 ) ; 
         let total = subtotal ; 
         if(coupon) {
             total = total - (total * coupon.discount) / 100 ;
         }
+        set({subtotal, total}) ;
     }
 
 }));

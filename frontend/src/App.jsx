@@ -28,9 +28,10 @@ function App() {
   }, [getMe, user]);
 
 
-  useEffect(() => {
-    getCartItems();
-  },[])
+  useEffect( () => {
+    if(!user) return ; 
+     getCartItems();
+  },[user])
 
   if (loading) {
     return (
