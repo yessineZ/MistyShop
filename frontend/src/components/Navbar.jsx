@@ -15,7 +15,7 @@ const Navbar = () => {
 			<div className='container mx-auto px-4 py-3'>
 				<div className='flex flex-wrap justify-between items-center'>
 					<Link to='/' className='text-2xl font-bold text-emerald-400 bg-gradient-to-br from-red-300 to-emerald-700 text-pretty bg-clip-text  items-center space-x-2 flex'>
-						MISTY-SHOP
+						MISTY-STORE
 					</Link>
 
 					<nav className='flex flex-wrap items-center gap-4'>

@@ -9,5 +9,4 @@ router.get('/getCart',CheckAuth,getCartProducts) ;
 router.post('/',CheckAuth,addToCart) ; 
 router.delete('/',CheckAuth,removeAllFromCart) ; 
 router.put('/:id',CheckAuth,updateQuantity) ; 
-
 export default router ;

@@ -49,13 +49,51 @@ export const useCartStore = create((set,get) => ({
     }
 },
 
+removeFromCart : async (productId) => {
+    try {
+        console.log('in removing from cart'+productId) ;
+          
+        const res = await axios.delete('/api/cart',{
+            data : { productId: productId }    
+        });
+        console.log(res) ; 
+        set((prevState) => {
+            return { cart: prevState.cart.filter((item) => item.product._id !== productId) };
+        });
+        get().calculateTotals() ; 
+
+    }catch(err) {
+        console.log(err.message) ;
+        toast.error('Failed to remove from cart') ;
+    }
+},
+updateQuantity : async (productId, quantity) => {
+    try {
+        if(quantity === 0) {
+            get().removeFromCart(productId) ; 
+            return ;
+        }
+        const res = await axios.put(`/api/cart/${productId}`, { quantity });
+        set((prevState) => {
+            return { cart: prevState.cart.map((item) => 
+                    item.product._id === productId 
+                       ? {...item, quantity } 
+                       : item
+                )};
+        });
+        get().calculateTotals() ;
+     } catch(err) {
+        console.log(err.message) ;
+        toast.error('Failed to update quantity') ;
+    }
+},
     calculateTotals : () => {
         const { coupon , cart} = get() ; 
-        const subtotal = cart.reduce((sum,item) => sum + item.price * item.quantity ,0 ) ; 
+        const subtotal = cart.reduce((sum,item) => sum + item.product.price * item.product.quantity ,0 ) ; 
         let total = subtotal ; 
         if(coupon) {
             total = total - (total * coupon.discount) / 100 ;
         }
     }
 
-}))
+}));

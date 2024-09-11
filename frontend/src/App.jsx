@@ -9,6 +9,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import AdminPage from './pages/AdminPage';
 import CategoryPage from './pages/CategoryPage';
 import { useCartStore } from './store/useCartStore';
+import CartPage from './pages/cartPage';
 
 function App() {
   const { user, getMe, loading } = useAuthStore((state) => ({
@@ -18,7 +19,7 @@ function App() {
   }));
 
 
-  const { getCartItems } = useCartStore() ; 
+  const { getCartItems ,cart } = useCartStore() ; 
 
   useEffect(() => {
     if (!user) {
@@ -51,6 +52,7 @@ function App() {
           <Route path='/login' element={!user ? <LoginPage /> : <Navigate to='/'/> } />
           <Route path='/secret-dashboard' element={user?.role === 'admin' ? <AdminPage/> : <Navigate to='/login' /> } />
           <Route path='/category/:category' element={<CategoryPage/>}></Route>
+          <Route path='/cart' element={user && <CartPage/>}></Route>
         </Routes>
       </div>
     </div>
