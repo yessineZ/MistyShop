@@ -2,7 +2,10 @@ import { motion } from "framer-motion";
 import { useCartStore } from "../store/useCartStore";
 import { Link } from "react-router-dom";
 import { MoveRight } from "lucide-react";
+import {loadStripe} from '@stripe/stripe-js' ; 
+import axios from "axios";
 
+const stripePromise = loadStripe('pk_test_51Pw3OPI2kOm9wTVMhtKp5lF7YFuS22EglddqfaGzRp47IiSyOu180bvFAzl9aq4UdAX7a4dZH7DmrUs7mSUJRJmE00jg4tJWYC');
 
 
 const OrderSummary = () => {
@@ -14,6 +17,19 @@ const OrderSummary = () => {
 	const formattedSavings = savings.toFixed(2);
 
 	const handlePayment = async () => {
+		const stripe = await stripePromise ; 
+		const res = await axios.post('/api/order/create-checkout-session',{
+			products : cart,
+			couponCode : coupon ? coupon.code : null
+		});
+		const session = res.data ; 
+		console.log(session)  ;  
+		const result = await stripe.redirectToCheckout({
+			sessionId: session.id,
+		});
+		if(result.error) {
+			console.error('Error:', result.error);
+		}
         
     }
 

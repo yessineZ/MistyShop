@@ -3,6 +3,7 @@ import Product from "../models/product.model.js";
 import User from "../models/user.model.js"
 
 export const getAnalyticsData = async () => {
+
     const totalUsers = await User.countDocuments() ; 
     const totalProducts = await Product.countDocuments() ;
 
@@ -10,7 +11,7 @@ export const getAnalyticsData = async () => {
         {
             $group : {
                 _id : null , 
-                totoalSales : {$sum : 1} ,
+                totalSales : {$sum : 1} ,
                 totalRevenue : { $sum : "$totalAmount"}
             }
         }
@@ -21,9 +22,6 @@ export const getAnalyticsData = async () => {
     return { users : totalUsers , products : totalProducts , totalSales , totalRevenue } ;
 
 }
-
-
-
 
 
 
@@ -41,7 +39,7 @@ export const getDailySalesData = async (startDate, endDate) => {
 			{
 				$group: {
 					_id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-					sales: { $sum: 1 },
+					sales: { $sum: 1 } ,
 					revenue: { $sum: "$totalAmount" },
 				},
 			},

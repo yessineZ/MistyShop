@@ -1,84 +1,81 @@
-import express from 'express' ; 
+import express from 'express';
 import { stripe } from '../lib/utils/stripe.js';
 import { CheckAuth } from '../middleware/CheckAuth.js';
 import Coupon from '../models/coupon.model.js';
 import Order from '../models/order.model.js';
 
 
-export const CheckOutSession = async (req,res) => {
-    try {
-        const { products , couponCode} = req.body ; 
-        if(!products || !couponCode) {
-            return res.status(400).json({message : 'Please provide products and coupon code'}) ;
-        }
-        if(!Array.isArray(products) || products.length ===  0) {
-            return res.status(400).json({message : 'Products array is required and should not be empty'}) ;
-        }
+export const CheckOutSession = async (req, res) => {
+	try {
+		const { products, couponCode } = req.body;
 
-        let totalPrice = 0 ; 
+		if (!Array.isArray(products) || products.length === 0) {
+			return res.status(400).json({ error: "Invalid or empty products array" });
+		}
 
-        const lineItems = products.map(product => {
-            const amount = Math.round(product.price * 100) ; 
-        
-            totalPrice += amount * product.quantity ;
-                return {
-                    price_data : {
-                        currency : 'USD',
-                        product_data : {
-                            name : product.name,
-                            images : [product.image],
-                        },
-                    unit_amount : amount
-                }
-            }
-        });
-        let coupon = null  ;
-        if(couponCode) {
-            coupon = await Coupon.findOne({code : couponCode , userId : req.userId , isActive : true })  ; 
-             if(coupon) {
-                totalPrice = Math.round(totalPrice * coupon.discountPercentage / 100) ; 
+		let totalAmount = 0;
 
-             }
-        }
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types : ['paypal','card'] ,
-            line_items : lineItems,
-            success_url : `${process.env.URL}/purchase-success?session_id={CHECKOUT_SESSION_ID} `,
-            cancel_url : `${process.env.URL}/purchase-cancel`,
-            client_reference_id : req.userId,
-            discounts : coupon ? [
-                {
-                    coupon : await createStripeCoupon(coupon.discountPercentage) 
-                }
-            ] : [],
-            metadata : {
-                userId : req.userId.toString(),
-                couponCode : couponCode || '' ,
-                products : JSON.stringify(
-                    products.map(product => ({
-                        id : product._id,
-                        name : product.name,
-                        quantity : product.quantity,
-                        price : product.price
-                    }))
-                )
-            }
-            
-        });
-        if(totalPrice >= 200000) {
-            await createNewCoupon(req.userId) ; 
-        } 
+		const lineItems = products.map((item) => {
+			const amount = Math.round(item.product.price * 100); // stripe wants u to send in the format of cents
+			totalAmount += amount * item.quantity;
 
-        res.json({id : session.id , totalAmount : totalPrice / 100}) ;
+			return {
+				price_data: {
+					currency: "usd",
+					product_data: {
+						name: item.product.name,
+						images: [item.product.image],
+					},
+					unit_amount: amount,
+				},
+				quantity: item.quantity || 1,
+			};
+		});
+        console.log(lineItems);
 
+		let coupon = null;
+		if (couponCode) {
+			coupon = await Coupon.findOne({ code: couponCode, userId: req.user._id, isActive: true });
+			if (coupon) {
+				totalAmount -= Math.round((totalAmount * coupon.discountPercentage) / 100);
+			}
+		}
 
+		const session = await stripe.checkout.sessions.create({
+			payment_method_types: ["card"],
+			line_items: lineItems,
+			mode: "payment",
+			success_url: `${process.env.CLIENT_URL}/purchase-success`,
+			cancel_url: `${process.env.CLIENT_URL}/purchase-cancel`,
+			discounts: coupon
+				? [
+						{
+							coupon: await createStripeCoupon(coupon.discountPercentage),
+						},
+				  ]
+				: [],
+			metadata: {
+				userId: req.userId.toString(),
+				couponCode: couponCode || "",
+				products: JSON.stringify(
+					products.map((p) => ({
+						id: p.product._id,
+						quantity: p.quantity,
+						price: p.product.price,
+					}))
+				),
+			},
+		});
 
-    }catch(err) {
-        console.log('error in CheckOutSession controller') ; 
-        res.status(500).json({message : err.message}) ;
-    }
-
-}
+		if (totalAmount >= 20000) {
+			await createNewCoupon(req.userId);
+		}
+		res.status(200).json({ id: session.id, totalAmount: totalAmount / 100 });
+	} catch (error) {
+		console.error("Error processing checkout:", error);
+		res.status(500).json({ message: "Error processing checkout", error: error.message });
+	}
+};
 
 
 async function createStripeCoupon(discountPercentage) {
