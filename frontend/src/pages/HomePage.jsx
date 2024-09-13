@@ -1,6 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import CategoryItem from '../components/CategoryItem';
+import { useProductStore } from '../store/useProductStore';
+import FeaturedProducts from '../components/FeaturedProducts';
 const categories = [
+	{ href : '/MistyGaming',name : 'MistyGaming',imageUrl : '/MistyGaming.jpg'},
 	{ href: "/jeans", name: "Jeans", imageUrl: "/jeans.jpg" },
 	{ href: "/t-shirts", name: "T-shirts", imageUrl: "/tshirts.jpg" },
 	{ href: "/shoes", name: "Shoes", imageUrl: "/shoes.jpg" },
@@ -12,7 +15,11 @@ const categories = [
 ];
 
 const HomePage = () => {
-	
+	const { getFeaturedProducts , loading , featuredProducts} = useProductStore() ; 
+	useEffect(() => {
+		getFeaturedProducts() ;     
+		console.log(featuredProducts) ; 
+	},[getFeaturedProducts]);
 
 	return (
 		<div className='relative min-h-screen text-white overflow-hidden'>
@@ -29,8 +36,12 @@ const HomePage = () => {
 						<CategoryItem category={category} key={category.name} />
 					))}
 				</div>
+				
+			{!loading && featuredProducts.length > 0 && <FeaturedProducts featuredProducts={featuredProducts} />}
+
 
 			</div>
+
 		</div>
 	);
 };

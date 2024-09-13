@@ -6,6 +6,28 @@ const GiftCouponCard = () => {
 	const [userInputCode, setUserInputCode] = useState("");
 	const { coupon, isCouponApplied, applyCoupon, getMyCoupon, removeCoupon } = useCartStore();
 
+	useEffect(() => {
+		getMyCoupon() ; 
+	},[getMyCoupon]);
+
+	useEffect(() => {
+		if(coupon){
+			setUserInputCode(coupon.code) ;
+		}
+	},[coupon]);
+
+	const HandleSubmitCoupon = () => {
+		if(!userInputCode) return ; 
+		applyCoupon(coupon.code) ; 
+	}
+
+	const HandleRemoveCoupon = () => {
+		removeCoupon() ;
+		setUserInputCode("") ;
+	}
+
+
+
 
 	return (
 		<motion.div
@@ -37,7 +59,7 @@ const GiftCouponCard = () => {
 					className='flex w-full items-center justify-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-300'
 					whileHover={{ scale: 1.05 }}
 					whileTap={{ scale: 0.95 }}
-					onClick={() => null}
+					onClick={HandleSubmitCoupon}
 				>
 					Apply Code
 				</motion.button>
@@ -57,7 +79,7 @@ const GiftCouponCard = () => {
              focus:ring-4 focus:ring-red-300'
 						whileHover={{ scale: 1.05 }}
 						whileTap={{ scale: 0.95 }}
-						onClick={() => null}
+						onClick={HandleRemoveCoupon}
 					>
 						Remove Coupon
 					</motion.button>

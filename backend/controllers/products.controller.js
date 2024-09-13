@@ -23,7 +23,7 @@ export const getSuggestedProducts = async (req,res) => {
     try { 
         
         //misty getting featured products from redis
-        
+        console.log("suggested products") ; 
         let featuredProducts = await redis.get("featured_products") ; 
         
         

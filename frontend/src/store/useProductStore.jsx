@@ -2,9 +2,10 @@ import { create } from 'zustand';
 import toast from 'react-hot-toast';
 import axios from 'axios'; 
 
-export const useProductStore = create((set) => ({
+export const useProductStore = create((set,get) => ({
     products: [], 
     loading: false, 
+    featuredProducts : [],
 
     fetchAllProducts: async () => {
         set({ loading: true });
@@ -55,6 +56,20 @@ export const useProductStore = create((set) => ({
             set({ loading: false });
         }
     },
+    getFeaturedProducts : async () => {
+        set({loading : true});
+        try {
+        const response = await axios.get('/api/products/featured') ;
+        console.log(response) ;
+        set({ featuredProducts : response.data.products }) ;
+        console.log(get().featuredProducts) ; 
+     }catch(err) {
+        console.log(err.message) ;
+        toast.error('Failed to get featured products') ;
+    }finally{
+        set({loading : false}) ;
+    }
+ },
 
     toggleFeaturedProduct: async (id) => {
         set({ loading: true });

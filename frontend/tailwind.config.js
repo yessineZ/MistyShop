@@ -9,5 +9,6 @@ export default {
   },
   plugins: [
     require('daisyui'),
+    require('tailwind-scrollbar'),
   ],
 }

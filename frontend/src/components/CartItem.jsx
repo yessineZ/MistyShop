@@ -9,7 +9,7 @@ const CartItem = ({ item }) => {
 		<div className='rounded-lg border p-4 shadow-sm border-gray-700 bg-gray-800 md:p-6'>
 			<div className='space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0'>
 				<div className='shrink-0 w-1/4 md:order-1'>
-					<img className='rounded object-cover' src={item?.product?.image} alt="3asba" />
+					<img className='rounded object-cover' src={item?.product?.image} alt="image" />
 				</div>
 				<label className='sr-only'>Choose quantity:</label>
 

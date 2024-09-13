@@ -16,6 +16,7 @@ export const getCoupon = async (req,res) => {
 export const validateCoupon = async (req,res) => {
     try {
         const { couponCode } = req.body ;
+        console.log(couponCode) ;
         const coupon = await Coupon.findOne({code : couponCode, userId : req.userId ,isActive : true}) ;
         if(!coupon) {
             return res.status(404).json({message : 'Coupon not found or expired'}) ;

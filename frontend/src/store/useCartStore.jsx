@@ -9,6 +9,7 @@ export const useCartStore = create((set,get) => ({
     total : 0 , 
     subtotal : 0 , 
     isCouponApplied : false ,
+    featuredProducts : [] ,
     
 
     getCartItems : async () => {
@@ -28,12 +29,13 @@ export const useCartStore = create((set,get) => ({
         const res = await axios.post('/api/cart', { productId: product._id });
         
         set((prevState) => {
-            const existingItem = prevState.cart.find((item) => item._id === product._id);
+            console.log(prevState) ; 
+            const existingItem = prevState.cart.find((item) => item.product._id === product._id);
             let newCart = [];
 
             if (existingItem) {
                 newCart = prevState.cart.map((item) => 
-                    item._id === product._id 
+                    item.product._id === product._id 
                         ? { ...item, quantity: item.quantity + 1 } 
                         : item
                 );
@@ -70,9 +72,42 @@ removeFromCart : async (productId) => {
         toast.error('Failed to remove from cart') ;
     }
 },
+
+
 clearCart : async () => {
     set({ cart : [] , coupon : null , total : 0 , subtotal : 0}) ; 
 },
+
+ getMyCoupon : async () => {
+    try {
+        const response = await axios.get('/api/coupons') ;
+        console.log(response) ;
+        set({coupon : response.data }) ;
+    }catch(err) {
+        console.log(err.message) ;
+    }
+ },
+
+
+ removeCoupon : async () => {
+    set({ coupon : null , isCouponApplied : false }) ; 
+    get().calculateTotals() ;
+    toast.success('Coupon Applied successfully') ;   
+ },
+
+
+ applyCoupon : async (code) => {
+    try {
+        console.log('in applying coupon'+code) ;
+        const response = await axios.post('/api/coupons/validate',{couponCode : code}) ;
+        set({coupon :response.data , isCouponApplied : true }) ; 
+        get().calculateTotals() ;
+
+    }catch(err) {
+        console.log(err.message) ;
+        toast.error('Failed to apply coupon') ;
+    }
+ },
 updateQuantity : async (productId, quantity) => {
     try {
         if(quantity === 0) {
@@ -95,9 +130,9 @@ updateQuantity : async (productId, quantity) => {
 },
     calculateTotals : () => {
         const { coupon , cart} = get() ; 
-        console.log(cart) ; 
         const subtotal = cart.reduce((sum,item) => sum + item.product.price * item.quantity ,0 ) ; 
-        let total = subtotal ; 
+        let total = subtotal ;
+        console.log(total) ;  
         if(coupon) {
             total = total - (total * coupon.discount) / 100 ;
         }

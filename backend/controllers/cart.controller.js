@@ -10,9 +10,7 @@ export const getCartProducts = async (req, res) => {
 
         const products = await Product.find({ _id: { $in: user.cartItems } });
 
-        if (!products.length) {
-            return res.status(404).json({ message: 'No products found in the cart' });
-        }
+        
 
         const cartItems = products.map((product) => {
             const item = user.cartItems.find(cartItem => cartItem._id.equals(product._id)); 
