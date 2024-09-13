@@ -3,6 +3,7 @@ import { stripe } from '../lib/utils/stripe.js';
 import { CheckAuth } from '../middleware/CheckAuth.js';
 import Coupon from '../models/coupon.model.js';
 import Order from '../models/order.model.js';
+import User from '../models/user.model.js';
 
 
 export const CheckOutSession = async (req, res) => {
@@ -35,7 +36,7 @@ export const CheckOutSession = async (req, res) => {
 
 		let coupon = null;
 		if (couponCode) {
-			coupon = await Coupon.findOne({ code: couponCode, userId: req.user._id, isActive: true });
+			coupon = await Coupon.findOne({ code: couponCode, userId: req.userId, isActive: true });
 			if (coupon) {
 				totalAmount -= Math.round((totalAmount * coupon.discountPercentage) / 100);
 			}
@@ -45,7 +46,7 @@ export const CheckOutSession = async (req, res) => {
 			payment_method_types: ["card"],
 			line_items: lineItems,
 			mode: "payment",
-			success_url: `${process.env.CLIENT_URL}/purchase-success`,
+			success_url: `${process.env.CLIENT_URL}/purchase-success?session_id={CHECKOUT_SESSION_ID}`,
 			cancel_url: `${process.env.CLIENT_URL}/purchase-cancel`,
 			discounts: coupon
 				? [
@@ -116,18 +117,27 @@ export const checkoutSuccess =  async (req,res) => {
         }
 
         const products = JSON.parse(session.metadata.products) ;
+		console.log(products) ; 
         const newOrder = await Order.create({
-            userId : session.metadata.userId,
-            products : products.map(product => ({
-                product : product.id,
-                quantity : product.quantity,
-                price : product.price
+            user : session.metadata.userId,
+            products : products.map(item => ({
+                product : item.id,
+                quantity : item.quantity,
+                price : item.price
             })),
-            totalAmount : session.amount_total / 100, //converst from mellimes to dinars xd
+            totalAmount : session.amount_total / 100, //convert from mellimes to dinars xd
             status : 'pending' , 
-            stripeSessionId : sessionId  //store session id for future reference
+            stripeSessionId : sessionId  
         });
-        res.json({message : 'Order Created and coupon is not active anymore', newOrder}) ;
+		if(newOrder) {
+			const userId = req.userId ; 
+			const user =await User.findById(userId) ; 
+			user.cartItems = [] ;
+			//we reset the cart items of the user 
+			await user.save() ;  
+
+		}
+        res.json({message : 'Order Created , products removed from the cart  and coupon is not active anymore', newOrder}) ;
     }catch(err) {
         console.error(err) ;
         res.status(500).json({message : 'Error in checkout success'}) ;

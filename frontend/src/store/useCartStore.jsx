@@ -70,6 +70,9 @@ removeFromCart : async (productId) => {
         toast.error('Failed to remove from cart') ;
     }
 },
+clearCart : async () => {
+    set({ cart : [] , coupon : null , total : 0 , subtotal : 0}) ; 
+},
 updateQuantity : async (productId, quantity) => {
     try {
         if(quantity === 0) {

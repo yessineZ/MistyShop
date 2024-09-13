@@ -10,6 +10,8 @@ import AdminPage from './pages/AdminPage';
 import CategoryPage from './pages/CategoryPage';
 import { useCartStore } from './store/useCartStore';
 import CartPage from './pages/cartPage';
+import PurchaseSuccessPage from './pages/SuccessPurchase';
+import PurchaseCancelPage from './pages/PurchaseCancelPage';
 
 function App() {
   const { user, getMe, loading } = useAuthStore((state) => ({
@@ -54,6 +56,8 @@ function App() {
           <Route path='/secret-dashboard' element={user?.role === 'admin' ? <AdminPage/> : <Navigate to='/login' /> } />
           <Route path='/category/:category' element={<CategoryPage/>}></Route>
           <Route path='/cart' element={user && <CartPage/>}></Route>
+          <Route path='/purchase-success' element={user && <PurchaseSuccessPage/>}></Route>
+          <Route path='/purchase-cancel' element={user && <PurchaseCancelPage/>}></Route>
         </Routes>
       </div>
     </div>
