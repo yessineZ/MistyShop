@@ -8,6 +8,10 @@ import analyticsRoute from './routes/analytics.routes.js' ;
 import  {ConnectToMongo}  from './database/ConnectToDb.js';
 import productsRoute from './routes/products.routes.js' ; 
 import cookieParser from 'cookie-parser';
+import path from 'path';
+
+const __dirname = path.resolve();
+
 const app =  express() ;
 app.use(cookieParser()) ; 
 app.use(express.json({limit : '10mb' } )) ; 
@@ -37,3 +41,12 @@ app.use('/api/coupons',couponsRoute) ;
 app.use('/api/order',orderRoute) ; 
 app.use('/api/analytics',analyticsRoute) ; 
 
+
+
+
+app.use(express.static(path.join(__dirname, 'frontend/dist')));
+
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
+});
