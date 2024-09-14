@@ -6,8 +6,13 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1" , 
+<<<<<<< HEAD
     "server" : "nodemon backend/server.js" ,
     "build": "npm install && npm install --prefix frontend && npm run build "
+=======
+    "server" : "node backend/server.js" ,
+    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
+>>>>>>> c53ed100868ad907eb8e0c085ab33174f8ce1af3
   
   
   
