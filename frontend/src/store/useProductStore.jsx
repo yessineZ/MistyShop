@@ -15,7 +15,6 @@ export const useProductStore = create((set,get) => ({
             set({ products: response.data.products, loading: false });
         } catch (error) {
             console.error('Fetch Products Error:', error);
-            toast.error('Failed to fetch products');
             set({ loading: false });
         }
     },
@@ -34,7 +33,6 @@ export const useProductStore = create((set,get) => ({
             }
         } catch (error) {
             console.error('Create Product Error:', error);
-            toast.error('Failed to add product');
             set({ loading: false });
         }
     },
@@ -52,7 +50,6 @@ export const useProductStore = create((set,get) => ({
             }
         } catch (error) {
             console.error('Delete Product Error:', error);
-            toast.error('Failed to delete product');
             set({ loading: false });
         }
     },
@@ -65,7 +62,6 @@ export const useProductStore = create((set,get) => ({
         console.log(get().featuredProducts) ; 
      }catch(err) {
         console.log(err.message) ;
-        toast.error('Failed to get featured products') ;
     }finally{
         set({loading : false}) ;
     }
@@ -89,7 +85,6 @@ export const useProductStore = create((set,get) => ({
             }
         } catch (error) {
             console.error('Toggle Featured Product Error:', error);
-            toast.error('Failed to toggle featured product');
             set({ loading: false });
         }
     },
@@ -102,7 +97,6 @@ export const useProductStore = create((set,get) => ({
             
         }catch(err) {
             console.error('Fetch ProductsByCategory Error:', error);
-            toast.error('Failed to fetch products by category');
         }
     } 
 

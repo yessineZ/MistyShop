@@ -20,7 +20,6 @@ export const useCartStore = create((set,get) => ({
         }catch(err) {
             set({ cart : []}) ; 
             console.log(err.message) ;
-            toast.error(err.message || 'failed to get cart') ;
         }
     },
 
@@ -50,7 +49,6 @@ export const useCartStore = create((set,get) => ({
         toast.success('Product added to cart');
     } catch (err) {
         console.log(err.message);
-        toast.error(err.message || 'Failed to add to cart');
     }
 },
 
@@ -69,7 +67,6 @@ removeFromCart : async (productId) => {
 
     }catch(err) {
         console.log(err.message) ;
-        toast.error('Failed to remove from cart') ;
     }
 },
 
@@ -105,7 +102,6 @@ clearCart : async () => {
 
     }catch(err) {
         console.log(err.message) ;
-        toast.error('Failed to apply coupon') ;
     }
  },
 updateQuantity : async (productId, quantity) => {
@@ -125,7 +121,6 @@ updateQuantity : async (productId, quantity) => {
         get().calculateTotals() ;
      } catch(err) {
         console.log(err.message) ;
-        toast.error('Failed to update quantity') ;
     }
 },
     calculateTotals : () => {

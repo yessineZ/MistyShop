@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import CategoryItem from '../components/CategoryItem';
 import { useProductStore } from '../store/useProductStore';
 import FeaturedProducts from '../components/FeaturedProducts';
+import { useCartStore } from '../store/useCartStore';
 const categories = [
 	{ href : '/MistyGaming',name : 'MistyGaming',imageUrl : '/MistyGaming.jpg'},
 	{ href: "/jeans", name: "Jeans", imageUrl: "/jeans.jpg" },
@@ -15,9 +16,11 @@ const categories = [
 ];
 
 const HomePage = () => {
+	const {getCartItems} = useCartStore() ; 
 	const { getFeaturedProducts , loading , featuredProducts} = useProductStore() ; 
 	useEffect(() => {
 		getFeaturedProducts() ;     
+		getCartItems() ; 
 		console.log(featuredProducts) ; 
 	},[getFeaturedProducts]);
 
