@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken' ;
 import { generateToken, setCookies , storeRefreshToken } from "../lib/utils/generateToken.js";
 import { redis } from "../lib/utils/redis.js";
 import bcrypt from 'bcryptjs' ; 
+import { sendWelcomeEmail } from "../mailTrap/emails.js";
 
 export const signUp = async (req, res) => {
     try {
@@ -35,6 +36,11 @@ export const signUp = async (req, res) => {
         await storeRefreshToken(user._id, refreshToken);
         setCookies(res, refreshToken, accessToken);
 
+        try {
+            await sendWelcomeEmail(user.email,user.name,"MISTY-STORE") ; 
+        }catch(err) {
+            console.error('Error sending welcome email:', err.message); 
+        }
         res.status(201).json({ message: 'User created successfully', user });
     } catch (err) {
         console.error(err.message); 

@@ -13,8 +13,6 @@ export const CheckAuth = async (req,res,next) => {
     //verify token
     try {
         const decoded = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET) ;
-        console.log('hello') ;
-        console.log(decoded.id) ; 
         const user = await User.findById(decoded.id)  ;
    
         req.userId = user._id ;

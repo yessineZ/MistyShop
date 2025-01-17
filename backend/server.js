@@ -9,7 +9,6 @@ import  {ConnectToMongo}  from './database/ConnectToDb.js';
 import productsRoute from './routes/products.routes.js' ; 
 import cookieParser from 'cookie-parser';
 import path from 'path';
-
 const __dirname = path.resolve();
 
 const app =  express() ;
@@ -40,7 +39,6 @@ app.use('/api/cart',cartRoute) ;
 app.use('/api/coupons',couponsRoute) ; 
 app.use('/api/order',orderRoute) ; 
 app.use('/api/analytics',analyticsRoute) ; 
-
 
 
 

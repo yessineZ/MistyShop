@@ -1,6 +1,5 @@
 import express from 'express';
 import { stripe } from '../lib/utils/stripe.js';
-import { CheckAuth } from '../middleware/CheckAuth.js';
 import Coupon from '../models/coupon.model.js';
 import Order from '../models/order.model.js';
 import User from '../models/user.model.js';
@@ -32,7 +31,6 @@ export const CheckOutSession = async (req, res) => {
 				quantity: item.quantity || 1,
 			};
 		});
-        console.log(lineItems);
 
 		let coupon = null;
 		if (couponCode) {
@@ -41,6 +39,7 @@ export const CheckOutSession = async (req, res) => {
 				totalAmount -= Math.round((totalAmount * coupon.discountPercentage) / 100);
 			}
 		}
+
 
 		const session = await stripe.checkout.sessions.create({
 			payment_method_types: ["card"],
@@ -113,18 +112,16 @@ export const checkoutSuccess =  async (req,res) => {
                 const coupon = await Coupon.findOneAndUpdate({code : session.metadata.couponCode , userId : session.metadata.userId}, {
                     isActive : false
                 });
-
             }
         }
 
         const products = JSON.parse(session.metadata.products) ;
-		console.log(products) ; 
         const newOrder = await Order.create({
             user : session.metadata.userId,
             products : products.map(item => ({
-                product : item.id,
-                quantity : item.quantity,
-                price : item.price
+                product : item.id ,
+                quantity : item.quantity ,
+                price : item.price 
             })),
             totalAmount : session.amount_total / 100, //convert from mellimes to dinars xd
             status : 'pending' , 
