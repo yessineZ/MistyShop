@@ -23,6 +23,7 @@ const OrderSummary = () => {
 			products : cart,
 			couponCode : coupon ? coupon.code : null
 		});
+		console.log(res) ; 
 		const session = res.data ; 
 		console.log(session)  ;  
 		const result = await stripe.redirectToCheckout({

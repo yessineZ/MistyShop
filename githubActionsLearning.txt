@@ -1,0 +1,24 @@
+name : Test Workflow
+
+on :
+    push :
+        branches :
+        - main
+
+jobs :
+    build :
+        runs-on : ubuntu-latest
+        env :
+            API_KEY : ${{secrets.API_KEY}}
+        steps :
+        - uses : actions/checkout@v2
+        - name : Build Docker Image
+          run : |
+            docker build -t linkedin-frontend /frontend
+            docker build -t linkedin-backend /backend
+        
+
+-----------------------------------
+each job has its own machine 
+each job runs on a fresh instance of the virtual machine
+

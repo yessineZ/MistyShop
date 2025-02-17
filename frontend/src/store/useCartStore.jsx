@@ -26,7 +26,6 @@ export const useCartStore = create((set,get) => ({
    addToCart: async (product) => {
     try {
         const res = await axios.post('/api/cart', { productId: product._id });
-        
         set((prevState) => {
             console.log(prevState) ; 
             const existingItem = prevState.cart.find((item) => item.product._id === product._id);

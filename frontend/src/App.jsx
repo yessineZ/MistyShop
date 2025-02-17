@@ -33,13 +33,12 @@ function App() {
   useEffect( () => {
     if(!user) return ; 
      getCartItems();
-  },[user])
+  },[user]);
 
   if (loading) {
     return (
       <div className='flex items-center justify-center h-screen'>
       <LoadingSpinner/>
-
       </div>
     );
   }

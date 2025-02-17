@@ -85,7 +85,7 @@ axios.interceptors.response.use(
 				}
 
 				// Start a new refresh process
-				refreshPromise = useUserStore.getState().refreshToken();
+				refreshPromise = useAuthStore.getState().refreshToken();
 				await refreshPromise;
 				refreshPromise = null;
 

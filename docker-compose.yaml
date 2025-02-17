@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  frontend:
+    build: 
+      context: /frontend
+      dockerfile: dockerfile 
+    ports:
+      - "3001:80"
+    container_name: linkedin-frontend
+    depends_on:
+      - backend
+    volumes:
+      - db_data:/app/data
+
+  backend:
+    build:
+      context: /backend
+      dockerfile: dockerfile
+    volumes:
+      - db_data:/app/data
+    ports:
+      - "3000:3000"
+    container_name: linkedin-backend
+    env_file:
+      - /backend/.env
+
+
+volumes:
+  db_data:

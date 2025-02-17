@@ -1,0 +1,31 @@
+name : Test Workflow
+
+on :
+    push :
+        branches :
+        - main
+
+jobs :
+    job-1 :
+        runs-on : ubuntu-latest
+        steps :
+        - name : Checkout repository
+          run : mkdir folder1 
+        
+        - name : Run a one-line script
+          run : echo Hello, world !
+
+         #create a file
+        - name : create a file
+          run : touch file1.txt
+
+        - name : List files
+          run : ls -l 
+
+        - name : say hello world
+          run : echo "Hello World"
+
+
+
+        
+        

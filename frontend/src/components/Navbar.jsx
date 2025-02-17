@@ -14,8 +14,8 @@ const Navbar = () => {
 		<header className='fixed top-0 left-0 w-full bg-gray-900 bg-opacity-90 backdrop-blur-md shadow-lg z-40 transition-all duration-300 border-b border-emerald-800'>
 			<div className='container mx-auto px-4 py-3'>
 				<div className='flex flex-wrap justify-between items-center'>
-					<Link to='/' className='text-2xl font-bold text-emerald-400 bg-gradient-to-br from-red-300 to-emerald-700 text-pretty bg-clip-text  items-center space-x-2 flex'>
-						MISTY-STORE
+					<Link to='/' className='text-2xl font-bold text-emerald-400 bg-gradient-to-br from-red-300 to-emerald-700 text-pretty bg-clip-text   items-center space-x-2 flex justify-between'>
+						<span>MISTY-STORE</span>  <ShoppingCart />
 					</Link>
 
 					<nav className='flex flex-wrap items-center gap-4'>
