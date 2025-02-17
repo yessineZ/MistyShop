@@ -17,11 +17,6 @@ jobs :
           run : ls -l
 
 
-
-        
-
-        
-
         - name : build frontend image 
           run : docker build -t linkedin-frontend ./frontend
         
@@ -37,17 +32,18 @@ jobs :
         
         #create a tag for the frontend image and the backend image
         - name : tag and push frontend image
-          run : docker tag linkedin-frontend $DOCKER_USERNAME/linkedin-frontend
+          run : docker tag linkedin-frontend ${{secrets.DOCKER_USERNAME}}/linkedin-frontend
         
         - name : tag and push backend image
-          run : docker tag linkedin-backend $DOCKER_USERNAME/linkedin-backend
+          run : docker tag linkedin-backend ${{secrets.DOCKER_USERNAME}}/linkedin-backend
  
-        
+
+        #push the frontend and backend images to docker hub
         - name : push frontend image to docker hub
-          run : docker push $DOCKER_USERNAME/linkedin-frontend
+          run : docker push ${{secrets.DOCKER_USERNAME}}/linkedin-frontend
 
         - name : push backend image to docker hub
-          run : docker push $DOCKER_PASSWORD/linkedin-backend
+          run : docker push ${{secrets.DOCKER_USERNAME}}/linkedin-backend
 
       
 
