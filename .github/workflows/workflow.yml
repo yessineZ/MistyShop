@@ -30,10 +30,10 @@ jobs:
 
       # Create tags for the frontend and backend images
       - name: Tag frontend image
-        run: docker tag linkedin-frontend ${{ secrets.DOCKER_USERNAME }}/linkedin-frontend:latest
+        run: docker tag linkedin-frontend ${{ secrets.DOCKER_USERNAME }}/linkedin-frontend
 
       - name: Tag backend image
-        run: docker tag linkedin-backend ${{ secrets.DOCKER_USERNAME }}/linkedin-backend:latest
+        run: docker tag linkedin-backend ${{ secrets.DOCKER_USERNAME }}/linkedin-backend
 
       # Push images to Docker Hub
       - name: Push frontend image to Docker Hub
