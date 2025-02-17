@@ -25,6 +25,33 @@ jobs :
         - name : say hello world
           run : echo "Hello World"
 
+    job-2 :
+        runs-on : ubuntu-latest
+        steps :
+        - name : Checkout repository
+          run : mkdir folder2 
+        
+        - name : Run a one-line script
+          run : echo Hello, world !
+
+        #create a file
+
+    job-3 : 
+        runs-on : ubuntu-latest
+        steps :
+        - name : Checkout repository
+          run : mkdir folder3 
+        
+        - name : Run a one-line script
+          run : echo Hello, world !
+
+        - name : create a file
+          run : touch file3.txt
+          
+        - name : list 
+          run : ls -l 
+
+
 
 
         
